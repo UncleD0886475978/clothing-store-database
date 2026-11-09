@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clothing-store-mysql-data
+  namespace: threads
+  labels:
+    app: clothing-store-mysql
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+  # storageClassName: ""   # uncomment / set to your cluster's class if needed

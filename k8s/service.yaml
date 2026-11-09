@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: clothing-store-mysql
+  namespace: threads
+  labels:
+    app: clothing-store-mysql
+spec:
+  type: ClusterIP
+  selector:
+    app: clothing-store-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clothing-store-mysql-headless
+  namespace: threads
+  labels:
+    app: clothing-store-mysql
+spec:
+  clusterIP: None
+  selector:
+    app: clothing-store-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306

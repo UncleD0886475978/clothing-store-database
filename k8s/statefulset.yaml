@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: clothing-store-mysql
+  namespace: threads
+  labels:
+    app: clothing-store-mysql
+spec:
+  serviceName: clothing-store-mysql-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clothing-store-mysql
+  template:
+    metadata:
+      labels:
+        app: clothing-store-mysql
+    spec:
+      containers:
+        - name: db
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - secretRef:
+                name: clothing-store-mysql
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", 'mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent']
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", 'mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent']
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: clothing-store-mysql-data

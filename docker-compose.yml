@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-threads_store}
+      MYSQL_USER: ${DB_USER:-threads}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-threads_change_me}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-threads_root_change_me}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - threads_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+volumes:
+  threads_mysql_data:
